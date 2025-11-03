@@ -21,6 +21,9 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private com.example.kho_be.service.TokenBlacklistService tokenBlacklistService;
+
     /**
      * Endpoint đăng nhập
      * POST /api/auth/login
@@ -68,5 +71,41 @@ public class AuthController {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Token hợp lệ");
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Endpoint đăng xuất
+     * POST /api/auth/logout
+     * Thêm token vào blacklist để không thể sử dụng lại
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        System.out.println("=== LOGOUT ENDPOINT CALLED ===");
+        System.out.println("Authorization header: " + authHeader);
+
+        try {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+
+                // Thêm token vào blacklist
+                tokenBlacklistService.blacklistToken(token);
+
+                System.out.println("User logged out. Token blacklisted: "
+                        + token.substring(0, Math.min(20, token.length())) + "...");
+            } else {
+                System.out.println("No valid Authorization header found");
+            }
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Đăng xuất thành công");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Logout error: " + e.getMessage());
+            e.printStackTrace();
+
+            Map<String, String> error = new HashMap<>();
+            error.put("message", "Lỗi khi đăng xuất: " + e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
     }
 }

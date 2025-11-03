@@ -1,6 +1,5 @@
 package com.example.kho_be.security;
 
-import com.example.kho_be.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +23,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private com.example.kho_be.service.TokenBlacklistService tokenBlacklistService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,
@@ -34,6 +36,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (jwt != null && !jwt.isEmpty()) {
+                // Kiểm tra token có trong blacklist không
+                if (tokenBlacklistService.isTokenBlacklisted(jwt)) {
+                    logger.warn("Token is blacklisted (user logged out)");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
                 // Lấy username từ token
                 String username = jwtUtil.getUsernameFromToken(jwt);
 
