@@ -6,6 +6,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +27,41 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    @Operation(summary = "Lấy danh sách tất cả sản phẩm")
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<ProductDTO> products = productService.getAllProducts();
+    @Operation(summary = "Lấy danh sách tất cả sản phẩm có phân trang")
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String stockFilter,
+            @RequestParam(required = false) Integer threshold,
+            @RequestParam(required = false) Integer supplierId) {
+
+        // Tạo Pageable với sorting
+        Sort sort = sortDirection.equalsIgnoreCase("ASC")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<ProductDTO> products;
+
+        // Xử lý các trường hợp filter khác nhau
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            // Tìm kiếm theo keyword
+            products = productService.searchProductsWithPagination(keyword, pageable);
+        } else if (supplierId != null) {
+            // Lọc theo supplier
+            products = productService.getProductsBySupplierWithPagination(supplierId, pageable);
+        } else if ("low".equals(stockFilter) || threshold != null) {
+            // Lọc theo tồn kho thấp
+            int stockThreshold = threshold != null ? threshold : 10;
+            products = productService.getLowStockProductsWithPagination(stockThreshold, pageable);
+        } else {
+            // Lấy tất cả
+            products = productService.getAllProductsWithPagination(pageable);
+        }
+
         return ResponseEntity.ok(products);
     }
 

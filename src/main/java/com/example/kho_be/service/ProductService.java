@@ -8,6 +8,8 @@ import com.example.kho_be.repository.ProductRepository;
 import com.example.kho_be.repository.SupplierRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +29,33 @@ public class ProductService {
     public List<ProductDTO> getAllProducts() {
         List<Product> products = productRepository.findAllOrderByIdDesc();
         return convertToProductDTOList(products);
+    }
+
+    // Lấy tất cả sản phẩm có phân trang
+    public Page<ProductDTO> getAllProductsWithPagination(Pageable pageable) {
+        Page<Product> productsPage = productRepository.findAllWithPagination(pageable);
+        return productsPage.map(this::convertToProductDTO);
+    }
+
+    // Tìm kiếm sản phẩm có phân trang
+    public Page<ProductDTO> searchProductsWithPagination(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllProductsWithPagination(pageable);
+        }
+        Page<Product> productsPage = productRepository.searchProductsWithPagination(keyword.trim(), pageable);
+        return productsPage.map(this::convertToProductDTO);
+    }
+
+    // Tìm sản phẩm theo supplier có phân trang
+    public Page<ProductDTO> getProductsBySupplierWithPagination(Integer supplierId, Pageable pageable) {
+        Page<Product> productsPage = productRepository.findByDefaultSupplierIdWithPagination(supplierId, pageable);
+        return productsPage.map(this::convertToProductDTO);
+    }
+
+    // Tìm sản phẩm có tồn kho thấp có phân trang
+    public Page<ProductDTO> getLowStockProductsWithPagination(Integer threshold, Pageable pageable) {
+        Page<Product> productsPage = productRepository.findLowStockProductsWithPagination(threshold, pageable);
+        return productsPage.map(this::convertToProductDTO);
     }
 
     // Lấy sản phẩm theo ID
