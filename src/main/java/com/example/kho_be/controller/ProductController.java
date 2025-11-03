@@ -44,23 +44,32 @@ public class ProductController {
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<ProductDTO> products;
+        // Xử lý stock range từ stockFilter hoặc custom threshold
+        Integer minStock = null;
+        Integer maxStock = null;
 
-        // Xử lý các trường hợp filter khác nhau
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            // Tìm kiếm theo keyword
-            products = productService.searchProductsWithPagination(keyword, pageable);
-        } else if (supplierId != null) {
-            // Lọc theo supplier
-            products = productService.getProductsBySupplierWithPagination(supplierId, pageable);
-        } else if ("low".equals(stockFilter) || threshold != null) {
-            // Lọc theo tồn kho thấp
-            int stockThreshold = threshold != null ? threshold : 10;
-            products = productService.getLowStockProductsWithPagination(stockThreshold, pageable);
-        } else {
-            // Lấy tất cả
-            products = productService.getAllProductsWithPagination(pageable);
+        if (threshold != null) {
+            // Custom threshold: <= threshold
+            maxStock = threshold;
+        } else if ("low".equals(stockFilter)) {
+            // Low: <= 10
+            maxStock = 10;
+        } else if ("medium".equals(stockFilter)) {
+            // Medium: 11-50
+            minStock = 11;
+            maxStock = 50;
+        } else if ("high".equals(stockFilter)) {
+            // High: > 50
+            minStock = 51;
         }
+
+        // Sử dụng method mới hỗ trợ kết hợp nhiều filter
+        Page<ProductDTO> products = productService.getProductsWithFilters(
+                keyword,
+                supplierId,
+                minStock,
+                maxStock,
+                pageable);
 
         return ResponseEntity.ok(products);
     }

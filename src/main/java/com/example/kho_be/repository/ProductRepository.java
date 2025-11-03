@@ -56,6 +56,31 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
         @Query("SELECT p FROM Product p WHERE p.currentStock <= :threshold ORDER BY p.currentStock ASC")
         Page<Product> findLowStockProductsWithPagination(@Param("threshold") Integer threshold, Pageable pageable);
 
+        // Tìm sản phẩm với nhiều filter kết hợp (supplier + stock range)
+        @Query("SELECT p FROM Product p WHERE " +
+                        "(:supplierId IS NULL OR p.defaultSupplierId = :supplierId) AND " +
+                        "(:minStock IS NULL OR p.currentStock >= :minStock) AND " +
+                        "(:maxStock IS NULL OR p.currentStock <= :maxStock)")
+        Page<Product> findProductsWithCombinedFilters(
+                        @Param("supplierId") Integer supplierId,
+                        @Param("minStock") Integer minStock,
+                        @Param("maxStock") Integer maxStock,
+                        Pageable pageable);
+
+        // Tìm kiếm sản phẩm với nhiều filter kết hợp (keyword + supplier + stock range)
+        @Query("SELECT p FROM Product p WHERE " +
+                        "(:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND "
+                        +
+                        "(:supplierId IS NULL OR p.defaultSupplierId = :supplierId) AND " +
+                        "(:minStock IS NULL OR p.currentStock >= :minStock) AND " +
+                        "(:maxStock IS NULL OR p.currentStock <= :maxStock)")
+        Page<Product> findProductsWithAllFilters(
+                        @Param("keyword") String keyword,
+                        @Param("supplierId") Integer supplierId,
+                        @Param("minStock") Integer minStock,
+                        @Param("maxStock") Integer maxStock,
+                        Pageable pageable);
+
         // Cập nhật sản phẩm
         @Modifying
         @Query("UPDATE Product p SET p.sku = :sku, p.name = :name, p.description = :description, " +

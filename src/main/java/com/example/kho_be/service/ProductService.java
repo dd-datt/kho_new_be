@@ -58,6 +58,36 @@ public class ProductService {
         return productsPage.map(this::convertToProductDTO);
     }
 
+    // Tìm sản phẩm với nhiều filter kết hợp
+    public Page<ProductDTO> getProductsWithFilters(String keyword, Integer supplierId, Integer minStock,
+            Integer maxStock, Pageable pageable) {
+        Page<Product> productsPage;
+
+        // Nếu có keyword, dùng query tìm kiếm kết hợp
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            productsPage = productRepository.findProductsWithAllFilters(
+                    keyword.trim(),
+                    supplierId,
+                    minStock,
+                    maxStock,
+                    pageable);
+        }
+        // Nếu không có keyword, dùng query filter theo supplier và stock range
+        else if (supplierId != null || minStock != null || maxStock != null) {
+            productsPage = productRepository.findProductsWithCombinedFilters(
+                    supplierId,
+                    minStock,
+                    maxStock,
+                    pageable);
+        }
+        // Nếu không có filter nào, lấy tất cả
+        else {
+            productsPage = productRepository.findAllWithPagination(pageable);
+        }
+
+        return productsPage.map(this::convertToProductDTO);
+    }
+
     // Lấy sản phẩm theo ID
     public ProductDTO getProductById(Integer id) {
         Optional<Product> product = productRepository.findById(id);
