@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,6 +28,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF', 'USER')")
     @Operation(summary = "Lấy danh sách tất cả sản phẩm có phân trang")
     public ResponseEntity<Page<ProductDTO>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
@@ -75,6 +77,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF', 'USER')")
     @Operation(summary = "Lấy thông tin sản phẩm theo ID")
     public ResponseEntity<?> getProductById(@PathVariable Integer id) {
         try {
@@ -87,6 +90,7 @@ public class ProductController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF', 'USER')")
     @Operation(summary = "Tìm kiếm sản phẩm theo tên hoặc SKU")
     public ResponseEntity<List<ProductDTO>> searchProducts(@RequestParam String keyword) {
         List<ProductDTO> products = productService.searchProducts(keyword);
@@ -94,6 +98,7 @@ public class ProductController {
     }
 
     @GetMapping("/supplier/{supplierId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
     @Operation(summary = "Lấy sản phẩm theo nhà cung cấp")
     public ResponseEntity<List<ProductDTO>> getProductsBySupplier(@PathVariable Integer supplierId) {
         List<ProductDTO> products = productService.getProductsBySupplier(supplierId);
@@ -101,6 +106,7 @@ public class ProductController {
     }
 
     @GetMapping("/low-stock")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
     @Operation(summary = "Lấy sản phẩm có tồn kho thấp")
     public ResponseEntity<List<ProductDTO>> getLowStockProducts(
             @RequestParam(defaultValue = "10") Integer threshold) {
@@ -109,6 +115,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Thêm sản phẩm mới")
     public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDTO productDTO) {
         try {
@@ -121,6 +128,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Cập nhật thông tin sản phẩm")
     public ResponseEntity<?> updateProduct(
             @PathVariable Integer id,
@@ -135,6 +143,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Xóa sản phẩm")
     public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
         productService.deleteProduct(id);
@@ -142,6 +151,7 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}/stock")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WAREHOUSE_STAFF')")
     @Operation(summary = "Cập nhật tồn kho sản phẩm")
     public ResponseEntity<?> updateStock(
             @PathVariable Integer id,

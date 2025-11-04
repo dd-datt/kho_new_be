@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class SupplierController {
     private SupplierService supplierService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
     @Operation(summary = "Lấy danh sách tất cả nhà cung cấp")
     public ResponseEntity<List<SupplierDTO>> getAllSuppliers() {
         List<SupplierDTO> suppliers = supplierService.getAllSuppliers();
@@ -30,6 +32,7 @@ public class SupplierController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
     @Operation(summary = "Lấy thông tin nhà cung cấp theo ID")
     public ResponseEntity<?> getSupplierById(@PathVariable Integer id) {
         try {
@@ -42,6 +45,7 @@ public class SupplierController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Tạo mới nhà cung cấp")
     public ResponseEntity<?> createSupplier(@Valid @RequestBody SupplierDTO supplierDTO) {
         try {
@@ -54,6 +58,7 @@ public class SupplierController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Cập nhật thông tin nhà cung cấp")
     public ResponseEntity<?> updateSupplier(
             @PathVariable Integer id,
@@ -71,6 +76,7 @@ public class SupplierController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Xóa nhà cung cấp")
     public ResponseEntity<?> deleteSupplier(@PathVariable Integer id) {
         try {
@@ -85,6 +91,7 @@ public class SupplierController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
     @Operation(summary = "Tìm kiếm nhà cung cấp", description = "Tìm kiếm theo tên, mã, email hoặc số điện thoại")
     public ResponseEntity<List<SupplierDTO>> searchSuppliers(
             @RequestParam(required = false) String keyword) {
@@ -93,6 +100,7 @@ public class SupplierController {
     }
 
     @GetMapping("/check-code")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Kiểm tra mã nhà cung cấp đã tồn tại")
     public ResponseEntity<Map<String, Boolean>> checkCodeExists(@RequestParam String code) {
         boolean exists = supplierService.existsByCode(code);
@@ -102,6 +110,7 @@ public class SupplierController {
     }
 
     @GetMapping("/check-email")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Kiểm tra email đã tồn tại")
     public ResponseEntity<Map<String, Boolean>> checkEmailExists(@RequestParam String email) {
         boolean exists = supplierService.existsByEmail(email);

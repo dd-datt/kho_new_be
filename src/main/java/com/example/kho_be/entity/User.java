@@ -7,6 +7,13 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 public class User {
 
+    public enum UserRole {
+        ADMIN, // Quản trị viên - toàn quyền
+        MANAGER, // Quản lý - xem báo cáo, duyệt phiếu
+        WAREHOUSE_STAFF, // Nhân viên kho - nhập/xuất hàng
+        USER // Người dùng thường - chỉ xem
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -22,6 +29,10 @@ public class User {
 
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private UserRole role = UserRole.USER;
 
     @Column(name = "is_active", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean isActive = true;
@@ -44,6 +55,16 @@ public class User {
         this.fullName = fullName;
         this.passwordHash = passwordHash;
         this.isActive = true;
+        this.role = UserRole.USER;
+    }
+
+    public User(String username, String email, String fullName, String passwordHash, UserRole role) {
+        this.username = username;
+        this.email = email;
+        this.fullName = fullName;
+        this.passwordHash = passwordHash;
+        this.isActive = true;
+        this.role = role;
     }
 
     // Getters and Setters
@@ -101,5 +122,13 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

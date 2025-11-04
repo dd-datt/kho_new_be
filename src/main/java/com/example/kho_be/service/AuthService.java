@@ -47,13 +47,14 @@ public class AuthService {
             // Generate JWT token
             String token = jwtUtil.generateToken(userDetails);
 
-            // Trả về response
+            // Trả về response với role
             return new LoginResponse(
                     token,
                     userDetails.getUserId(),
                     userDetails.getUsername(),
                     userDetails.getEmail(),
-                    userDetails.getFullName());
+                    userDetails.getFullName(),
+                    userDetails.getRole().name()); // Thêm role
 
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Username hoặc password không đúng");
@@ -80,6 +81,7 @@ public class AuthService {
         user.setEmail(registerRequest.getEmail());
         user.setFullName(registerRequest.getFullName());
         user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setRole(User.UserRole.USER); // Mặc định role USER khi đăng ký
         user.setIsActive(true);
 
         // Lưu vào database

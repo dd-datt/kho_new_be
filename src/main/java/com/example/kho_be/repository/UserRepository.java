@@ -16,4 +16,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
+
+    // Thêm các method mới cho phân quyền
+    java.util.List<User> findByRole(User.UserRole role);
+
+    java.util.List<User> findByUsernameContainingOrEmailContaining(String username, String email);
 }

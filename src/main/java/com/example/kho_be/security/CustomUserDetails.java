@@ -18,9 +18,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Trả về quyền mặc định là ROLE_USER
-        // Nếu bạn có bảng roles thì có thể mở rộng thêm
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        // Trả về role từ database
+        return Collections.singletonList(
+                new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
     @Override
@@ -68,5 +68,9 @@ public class CustomUserDetails implements UserDetails {
 
     public String getFullName() {
         return user.getFullName();
+    }
+
+    public User.UserRole getRole() {
+        return user.getRole();
     }
 }
