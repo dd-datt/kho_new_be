@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("api/products/**").permitAll()
                         .requestMatchers("/api/suppliers/**").permitAll() // Cho phép truy cập công khai API suppliers
+                        .requestMatchers("/api/import-slips/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
