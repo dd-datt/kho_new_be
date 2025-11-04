@@ -7,6 +7,8 @@ import com.example.kho_be.entity.*;
 import com.example.kho_be.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +35,17 @@ public class ImportSlipService {
     private UserRepository userRepository;
 
     /**
-     * Lấy tất cả phiếu nhập
+     * Lấy tất cả phiếu nhập với phân trang
      */
-    public List<ImportSlipResponseDTO> getAllImportSlips() {
+    public Page<ImportSlipResponseDTO> getAllImportSlips(Pageable pageable) {
+        Page<ImportSlip> importSlips = importSlipRepository.findAll(pageable);
+        return importSlips.map(this::convertToResponseDTO);
+    }
+
+    /**
+     * Lấy tất cả phiếu nhập (không phân trang - để backward compatibility)
+     */
+    public List<ImportSlipResponseDTO> getAllImportSlipsWithoutPaging() {
         List<ImportSlip> importSlips = importSlipRepository.findAll();
         return importSlips.stream()
                 .map(this::convertToResponseDTO)
@@ -199,7 +209,7 @@ public class ImportSlipService {
      * Tìm kiếm và lọc phiếu nhập với nhiều tiêu chí
      */
     public List<ImportSlipResponseDTO> searchAndFilter(Integer supplierId, Integer month, Integer year,
-                                                       LocalDate startDate, LocalDate endDate) {
+            LocalDate startDate, LocalDate endDate) {
         Specification<ImportSlip> spec = (root, query, cb) -> cb.conjunction();
 
         if (supplierId != null) {

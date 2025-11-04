@@ -9,6 +9,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +34,19 @@ public class ImportSlipController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
-    @Operation(summary = "Lấy tất cả phiếu nhập", description = "Truy xuất danh sách tất cả phiếu nhập")
-    public ResponseEntity<List<ImportSlipResponseDTO>> getAllImportSlips() {
-        List<ImportSlipResponseDTO> importSlips = importSlipService.getAllImportSlips();
+    @Operation(summary = "Lấy tất cả phiếu nhập (có phân trang)", description = "Truy xuất danh sách phiếu nhập với phân trang và sắp xếp")
+    public ResponseEntity<Page<ImportSlipResponseDTO>> getAllImportSlips(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDirection) {
+
+        Sort sort = sortDirection.equalsIgnoreCase("ASC")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ImportSlipResponseDTO> importSlips = importSlipService.getAllImportSlips(pageable);
         return ResponseEntity.ok(importSlips);
     }
 
