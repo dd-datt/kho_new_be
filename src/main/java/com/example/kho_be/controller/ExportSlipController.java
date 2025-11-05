@@ -129,4 +129,52 @@ public class ExportSlipController {
                 month, year, startDate, endDate, reason);
         return ResponseEntity.ok(exportSlips);
     }
+
+    @GetMapping("/{id}/export-pdf")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
+    @Operation(summary = "Xuất PDF phiếu xuất", description = "Xuất phiếu xuất thành file PDF")
+    public void exportExportSlipPdf(@PathVariable Integer id, jakarta.servlet.http.HttpServletResponse response)
+            throws Exception {
+        // Lấy dữ liệu phiếu xuất từ service
+        ExportSlipResponseDTO slip = exportSlipService.getExportSlipById(id);
+
+        // Chuẩn bị parameters cho báo cáo
+        java.util.Map<String, Object> params = new java.util.HashMap<>();
+        params.put("id", slip.getId() != null ? slip.getId().toString() : "");
+        params.put("exportDate", slip.getExportDate() != null ? java.sql.Date.valueOf(slip.getExportDate()) : null);
+        params.put("createdAt", slip.getCreatedAt() != null ? java.sql.Timestamp.valueOf(slip.getCreatedAt()) : null);
+        params.put("username", slip.getUsername() != null ? slip.getUsername() : "");
+        params.put("reason", slip.getReason() != null ? slip.getReason() : "");
+
+        // Chuẩn bị data source cho bảng chi tiết
+        net.sf.jasperreports.engine.data.JRBeanCollectionDataSource dataSource = new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
+                slip.getDetails());
+
+        // Load file jasper (nếu chưa có thì compile từ jrxml)
+        java.io.InputStream jasperStream = getClass().getResourceAsStream("/reports/phieu_xuat.jasper");
+        net.sf.jasperreports.engine.JasperReport jasperReport;
+
+        if (jasperStream == null) {
+            // Nếu chưa có file .jasper, compile từ file .jrxml
+            java.io.InputStream jrxmlStream = getClass().getResourceAsStream("/reports/phieu_xuat.jrxml");
+            if (jrxmlStream == null) {
+                throw new RuntimeException(
+                        "Không tìm thấy file báo cáo phieu_xuat.jrxml hoặc phieu_xuat.jasper trong thư mục resources/reports/");
+            }
+            jasperReport = net.sf.jasperreports.engine.JasperCompileManager.compileReport(jrxmlStream);
+        } else {
+            jasperReport = (net.sf.jasperreports.engine.JasperReport) net.sf.jasperreports.engine.util.JRLoader
+                    .loadObject(jasperStream);
+        }
+
+        // Fill report với dữ liệu
+        net.sf.jasperreports.engine.JasperPrint jasperPrint = net.sf.jasperreports.engine.JasperFillManager
+                .fillReport(jasperReport, params, dataSource);
+
+        // Xuất PDF
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=phieu_xuat_" + slip.getId() + ".pdf");
+        net.sf.jasperreports.engine.JasperExportManager.exportReportToPdfStream(jasperPrint,
+                response.getOutputStream());
+    }
 }
