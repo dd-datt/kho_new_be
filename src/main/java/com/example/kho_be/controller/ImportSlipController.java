@@ -7,7 +7,11 @@ import com.example.kho_be.service.ImportSlipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,8 +24,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/import-slips")
@@ -128,5 +135,51 @@ public class ImportSlipController {
         List<ImportSlipResponseDTO> importSlips = importSlipService.searchAndFilter(
                 supplierId, month, year, startDate, endDate);
         return ResponseEntity.ok(importSlips);
+    }
+
+    @GetMapping("/{id}/export-pdf")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
+    @Operation(summary = "Xuất PDF phiếu nhập", description = "Xuất phiếu nhập thành file PDF")
+    public void exportImportSlipPdf(@PathVariable Integer id, HttpServletResponse response) throws Exception {
+        // Lấy dữ liệu phiếu nhập từ service
+        ImportSlipResponseDTO slip = importSlipService.getImportSlipById(id);
+
+        // Chuẩn bị parameters cho báo cáo
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", slip.getId() != null ? slip.getId().toString() : "");
+        params.put("supplierName", slip.getSupplierName() != null ? slip.getSupplierName() : "");
+        params.put("supplierCode", slip.getSupplierCode() != null ? slip.getSupplierCode() : "");
+        params.put("importDate", slip.getImportDate() != null ? java.sql.Date.valueOf(slip.getImportDate()) : null);
+        params.put("createdAt", slip.getCreatedAt() != null ? java.sql.Timestamp.valueOf(slip.getCreatedAt()) : null);
+        params.put("username", slip.getUsername() != null ? slip.getUsername() : "");
+        params.put("reason", slip.getReason() != null ? slip.getReason() : "");
+        params.put("totalAmount", slip.getTotalAmount() != null ? slip.getTotalAmount() : java.math.BigDecimal.ZERO);
+
+        // Chuẩn bị data source cho bảng chi tiết
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(slip.getDetails());
+
+        // Load file jasper (nếu chưa có thì compile từ jrxml)
+        InputStream jasperStream = getClass().getResourceAsStream("/reports/phieu_nhap.jasper");
+        JasperReport jasperReport;
+
+        if (jasperStream == null) {
+            // Nếu chưa có file .jasper, compile từ file .jrxml
+            InputStream jrxmlStream = getClass().getResourceAsStream("/reports/phieu_nhap.jrxml");
+            if (jrxmlStream == null) {
+                throw new RuntimeException(
+                        "Không tìm thấy file báo cáo phieu_nhap.jrxml hoặc phieu_nhap.jasper trong thư mục resources/reports/");
+            }
+            jasperReport = JasperCompileManager.compileReport(jrxmlStream);
+        } else {
+            jasperReport = (JasperReport) JRLoader.loadObject(jasperStream);
+        }
+
+        // Fill report với dữ liệu
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, dataSource);
+
+        // Xuất PDF
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=phieu_nhap_" + slip.getId() + ".pdf");
+        JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
     }
 }

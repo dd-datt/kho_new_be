@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="phieu_nhap"
+              language="java"
+              pageWidth="595"
+              pageHeight="842"
+              columnWidth="555"
+              leftMargin="20"
+              rightMargin="20"
+              topMargin="20"
+              bottomMargin="20">
+
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="phieu-nhap-kho-test1"/>
+
+    <!-- Parameters -->
+    <parameter name="supplierName" class="java.lang.String"/>
+    <parameter name="importDate" class="java.util.Date"/>
+    <parameter name="createdAt" class="java.util.Date"/>
+    <parameter name="id" class="java.lang.String"/>
+
+    <!-- Fields -->
+    <field name="productSku" class="java.lang.String"/>
+    <field name="productName" class="java.lang.String"/>
+    <field name="importPrice" class="java.math.BigDecimal"/>
+    <field name="quantity" class="java.lang.Integer"/>
+
+    <!-- Biến tổng tiền -->
+    <variable name="TOTAL_AMOUNT" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+        <variableExpression><![CDATA[$F{importPrice} != null && $F{quantity} != null ? $F{importPrice}.multiply(new java.math.BigDecimal($F{quantity})) : java.math.BigDecimal.ZERO]]></variableExpression>
+        <initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression>
+    </variable>
+
+    <!-- Title -->
+    <title>
+        <band height="100">
+            <staticText>
+                <reportElement x="0" y="10" width="555" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="18" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[PHIẾU NHẬP KHO]]></text>
+            </staticText>
+
+            <textField>
+                <reportElement x="0" y="45" width="300" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Mã phiếu: " + $P{id}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="65" width="300" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Nhà cung cấp: " + $P{supplierName}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="300" y="45" width="255" height="20"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Ngày nhập: " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{importDate})]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="300" y="65" width="255" height="20"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Ngày tạo: " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{createdAt})]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <!-- Column Header -->
+    <columnHeader>
+        <band height="25">
+            <staticText>
+                <reportElement mode="Opaque" x="0" y="0" width="70" height="25" backcolor="#F2D7B5"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[Mã SP]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement mode="Opaque" x="70" y="0" width="250" height="25" backcolor="#F2D7B5"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[Tên sản phẩm]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement mode="Opaque" x="320" y="0" width="70" height="25" backcolor="#F2D7B5"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[Số lượng]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement mode="Opaque" x="390" y="0" width="80" height="25" backcolor="#F2D7B5"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[Giá nhập]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement mode="Opaque" x="470" y="0" width="85" height="25" backcolor="#F2D7B5"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[Thành tiền]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <!-- Detail -->
+    <detail>
+        <band height="20">
+            <textField>
+                <reportElement x="0" y="0" width="70" height="20"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{productSku}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="70" y="0" width="250" height="20"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[" " + $F{productName}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="320" y="0" width="70" height="20"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#,##0">
+                <reportElement x="390" y="0" width="80" height="20"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{importPrice}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#,##0">
+                <reportElement x="470" y="0" width="85" height="20"/>
+                <box><topPen lineWidth="1.0"/><leftPen lineWidth="1.0"/><bottomPen lineWidth="1.0"/><rightPen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{importPrice}.multiply(new java.math.BigDecimal($F{quantity}))]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <!-- Summary -->
+    <summary>
+        <band height="540">
+            <textField>
+                <reportElement x="370" y="0" width="100" height="20"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Tổng cộng: "]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#,##0">
+                <reportElement x="470" y="0" width="85" height="20"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{TOTAL_AMOUNT}]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="50" y="490" width="150" height="50"/>
+                <textElement textAlignment="Center" verticalAlignment="Bottom">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[Bên xuất
+(Ký, họ tên)]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="340" y="490" width="150" height="50"/>
+                <textElement textAlignment="Center" verticalAlignment="Bottom">
+                    <font fontName="SansSerif" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[Bên nhập
+(Ký, họ tên)]]></text>
+            </staticText>
+        </band>
+    </summary>
+
+</jasperReport>

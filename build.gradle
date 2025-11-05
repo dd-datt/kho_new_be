@@ -25,7 +25,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     runtimeOnly 'com.mysql:mysql-connector-j'
     // JasperReports for PDF export
-    implementation 'net.sf.jasperreports:jasperreports:6.21.0'
+    implementation 'net.sf.jasperreports:jasperreports:7.0.3'
+    implementation 'net.sf.jasperreports:jasperreports-fonts:6.20.0'
     //  Swagger OpenAPI - updated version for Spring Boot 3.5.x
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
     // Thêm thư viện ModelMapper
