@@ -3,6 +3,7 @@ package com.example.kho_be.dto;
 import com.example.kho_be.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -11,13 +12,17 @@ public class UserDTO {
     private Integer id;
 
     @NotBlank(message = "Username không được để trống")
+    @Size(max = 100, message = "Username không được vượt quá 100 ký tự")
     private String username;
 
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
     private String email;
 
+    @Size(max = 255, message = "Họ và tên không được vượt quá 255 ký tự")
     private String fullName;
+
+    @Size(min = 6, max = 20, message = "Mật khẩu phải có từ 6 đến 20 ký tự")
     private String password; // Chỉ dùng khi tạo mới
     private User.UserRole role; // Thêm role
     private Boolean isActive;
