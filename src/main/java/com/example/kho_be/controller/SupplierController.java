@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,5 +95,25 @@ public class SupplierController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", exists);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/paginated")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
+    @Operation(summary = "Lấy danh sách nhà cung cấp với phân trang")
+    public ResponseEntity<Page<SupplierDTO>> getSuppliersPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String keyword) {
+        Page<SupplierDTO> suppliers;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            suppliers = supplierService.searchSuppliersPaginated(keyword, page, size, sortBy, sortDir);
+        } else {
+            suppliers = supplierService.getAllSuppliersPaginated(page, size, sortBy, sortDir);
+        }
+
+        return ResponseEntity.ok(suppliers);
     }
 }

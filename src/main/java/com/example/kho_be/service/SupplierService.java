@@ -5,6 +5,10 @@ import com.example.kho_be.dto.SupplierMapper;
 import com.example.kho_be.entity.Supplier;
 import com.example.kho_be.repository.SupplierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,7 +94,7 @@ public class SupplierService {
         supplierRepository.deleteById(id);
     }
 
-    // Tìm kiếm nhà cung cấp
+    // Tìm kiếm nhà cung cấp (không phân trang)
     public List<SupplierDTO> searchSuppliers(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return getAllSuppliers();
@@ -98,6 +102,33 @@ public class SupplierService {
         return supplierRepository.searchSuppliers(keyword.trim()).stream()
                 .map(supplierMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    // Lấy tất cả nhà cung cấp với phân trang
+    public Page<SupplierDTO> getAllSuppliersPaginated(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return supplierRepository.findAll(pageable)
+                .map(supplierMapper::toDTO);
+    }
+
+    // Tìm kiếm nhà cung cấp với phân trang
+    public Page<SupplierDTO> searchSuppliersPaginated(String keyword, int page, int size, String sortBy,
+            String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return supplierRepository.findAll(pageable)
+                    .map(supplierMapper::toDTO);
+        }
+
+        return supplierRepository.searchSuppliers(keyword.trim(), pageable)
+                .map(supplierMapper::toDTO);
     }
 
     // Kiểm tra mã nhà cung cấp đã tồn tại
