@@ -34,60 +34,37 @@ public class SupplierController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'WAREHOUSE_STAFF')")
     @Operation(summary = "Lấy thông tin nhà cung cấp theo ID")
-    public ResponseEntity<?> getSupplierById(@PathVariable Integer id) {
-        try {
-            SupplierDTO supplier = supplierService.getSupplierById(id);
-            return ResponseEntity.ok(supplier);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(createErrorResponse(e.getMessage()));
-        }
+    public ResponseEntity<SupplierDTO> getSupplierById(@PathVariable Integer id) {
+        SupplierDTO supplier = supplierService.getSupplierById(id);
+        return ResponseEntity.ok(supplier);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Tạo mới nhà cung cấp")
-    public ResponseEntity<?> createSupplier(@Valid @RequestBody SupplierDTO supplierDTO) {
-        try {
-            SupplierDTO createdSupplier = supplierService.createSupplier(supplierDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdSupplier);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(createErrorResponse(e.getMessage()));
-        }
+    public ResponseEntity<SupplierDTO> createSupplier(@Valid @RequestBody SupplierDTO supplierDTO) {
+        SupplierDTO createdSupplier = supplierService.createSupplier(supplierDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdSupplier);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Cập nhật thông tin nhà cung cấp")
-    public ResponseEntity<?> updateSupplier(
+    public ResponseEntity<SupplierDTO> updateSupplier(
             @PathVariable Integer id,
             @Valid @RequestBody SupplierDTO supplierDTO) {
-        try {
-            SupplierDTO updatedSupplier = supplierService.updateSupplier(id, supplierDTO);
-            return ResponseEntity.ok(updatedSupplier);
-        } catch (RuntimeException e) {
-            HttpStatus status = e.getMessage().contains("Không tìm thấy")
-                    ? HttpStatus.NOT_FOUND
-                    : HttpStatus.BAD_REQUEST;
-            return ResponseEntity.status(status)
-                    .body(createErrorResponse(e.getMessage()));
-        }
+        SupplierDTO updatedSupplier = supplierService.updateSupplier(id, supplierDTO);
+        return ResponseEntity.ok(updatedSupplier);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Xóa nhà cung cấp")
-    public ResponseEntity<?> deleteSupplier(@PathVariable Integer id) {
-        try {
-            supplierService.deleteSupplier(id);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Xóa nhà cung cấp thành công");
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(createErrorResponse(e.getMessage()));
-        }
+    public ResponseEntity<Map<String, String>> deleteSupplier(@PathVariable Integer id) {
+        supplierService.deleteSupplier(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Xóa nhà cung cấp thành công");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/search")
@@ -117,11 +94,5 @@ public class SupplierController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", exists);
         return ResponseEntity.ok(response);
-    }
-
-    private Map<String, String> createErrorResponse(String message) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", message);
-        return error;
     }
 }

@@ -118,15 +118,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Xử lý các lỗi chung
+     * Xử lý các lỗi chung (RuntimeException từ Service)
+     * Trả về error message trực tiếp dưới dạng string
      */
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "error");
-        response.put("message", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        logger.error("RuntimeException: {}", ex.getMessage());
+        // Trả về string trực tiếp để frontend dễ xử lý
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
     /**

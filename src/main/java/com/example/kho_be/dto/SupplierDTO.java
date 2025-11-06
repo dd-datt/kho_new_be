@@ -21,10 +21,12 @@ public class SupplierDTO {
     @Size(max = 150, message = "Email không được vượt quá 150 ký tự")
     private String email;
 
-    @Size(max = 20, message = "Số điện thoại không được vượt quá 20 ký tự")
-    @Pattern(regexp = "^$|^[0-9+\\-\\s()]+$", message = "Số điện thoại không hợp lệ")
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^(0[3|5|7|8|9])[0-9]{8}$", message = "Số điện thoại phải là số di động Việt Nam hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)")
     private String phoneNumber;
 
+    @NotBlank(message = "Địa chỉ không được để trống")
+    @Size(max = 500, message = "Địa chỉ không được vượt quá 500 ký tự")
     private String address;
 
     // Constructors
