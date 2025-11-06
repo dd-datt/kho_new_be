@@ -4,6 +4,10 @@ import com.example.kho_be.dto.UserDTO;
 import com.example.kho_be.entity.User;
 import com.example.kho_be.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,6 +139,33 @@ public class UserService {
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Lấy danh sách người dùng với phân trang và tìm kiếm
+     */
+    public Page<UserDTO> getUsersPaginated(int page, int size, String keyword, String roleStr) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<User> userPage;
+
+        if (keyword != null && !keyword.trim().isEmpty() && roleStr != null && !roleStr.trim().isEmpty()) {
+            // Tìm kiếm theo keyword và role
+            User.UserRole role = User.UserRole.valueOf(roleStr);
+            userPage = userRepository.findByUsernameContainingOrEmailContainingAndRole(keyword, keyword, role,
+                    pageable);
+        } else if (keyword != null && !keyword.trim().isEmpty()) {
+            // Chỉ tìm kiếm theo keyword
+            userPage = userRepository.findByUsernameContainingOrEmailContaining(keyword, keyword, pageable);
+        } else if (roleStr != null && !roleStr.trim().isEmpty()) {
+            // Chỉ lọc theo role
+            User.UserRole role = User.UserRole.valueOf(roleStr);
+            userPage = userRepository.findByRole(role, pageable);
+        } else {
+            // Không có filter, lấy tất cả
+            userPage = userRepository.findAll(pageable);
+        }
+
+        return userPage.map(this::convertToDTO);
     }
 
     // Helper method để convert Entity sang DTO
