@@ -1,243 +1,211 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
-              name="phieu_nhap"
-              language="java"
-              pageWidth="595"
-              pageHeight="842"
-              columnWidth="555"
-              leftMargin="20"
-              rightMargin="20"
-              topMargin="20"
-              bottomMargin="20">
-
+<!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="phieu_nhap" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bcf360cf-80b9-4f3e-9394-e6e4f5766d3b">
     <property name="com.jaspersoft.studio.data.defaultdataadapter" value="phieu-nhap-kho-test1"/>
-
-    <!-- Parameters -->
+    <property name="com.jaspersoft.studio.unit." value="pixel"/>
+    <property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+    <property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+    <property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+    <property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+    <property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+    <property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+    <property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+    <property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
     <parameter name="supplierName" class="java.lang.String"/>
     <parameter name="importDate" class="java.util.Date"/>
     <parameter name="createdAt" class="java.util.Date"/>
     <parameter name="id" class="java.lang.String"/>
-
-    <!-- Fields -->
     <field name="productSku" class="java.lang.String"/>
     <field name="productName" class="java.lang.String"/>
     <field name="importPrice" class="java.math.BigDecimal"/>
     <field name="quantity" class="java.lang.Integer"/>
-
-    <!-- Biến tổng tiền -->
-    <variable name="TOTAL_AMOUNT" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-        <variableExpression><![CDATA[
-            $F{importPrice} != null && $F{quantity} != null
+    <variable name="TOTAL_AMOUNT" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{importPrice} != null && $F{quantity} != null
                 ? $F{importPrice}.multiply(new java.math.BigDecimal($F{quantity}))
-                : java.math.BigDecimal.ZERO
-        ]]></variableExpression>
+                : java.math.BigDecimal.ZERO]]></variableExpression>
         <initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression>
     </variable>
-
-    <!-- Title -->
     <title>
         <band height="100">
             <staticText>
-                <reportElement x="0" y="10" width="555" height="30"/>
+                <reportElement x="0" y="10" width="555" height="30" uuid="86bf6f22-55e3-43cd-84b0-9237b83b2276"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="18" isBold="true"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="18" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <text><![CDATA[PHIẾU NHẬP KHO]]></text>
             </staticText>
-
             <textField>
-                <reportElement x="0" y="50" width="270" height="18"/>
+                <reportElement x="0" y="50" width="270" height="18" uuid="87f828dc-92cc-48d5-bed0-c423a9a8fdc1"/>
                 <textElement>
-                    <font fontName="Times New Roman" size="11"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Mã phiếu: " + $P{id}]]></textFieldExpression>
             </textField>
-
             <textField>
-                <reportElement x="0" y="70" width="270" height="18"/>
+                <reportElement x="0" y="70" width="270" height="18" uuid="db44a78f-a72c-41e8-a8ac-2bc7c9bd1aaa"/>
                 <textElement>
-                    <font fontName="Times New Roman" size="11"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Nhà cung cấp: " + $P{supplierName}]]></textFieldExpression>
             </textField>
-
             <textField>
-                <reportElement x="285" y="50" width="270" height="18"/>
+                <reportElement x="285" y="50" width="270" height="18" uuid="33d2099f-2eac-4199-a33a-f4a2b707bf7b"/>
                 <textElement textAlignment="Right">
-                    <font fontName="Times New Roman" size="11"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Ngày nhập: " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{importDate})]]></textFieldExpression>
             </textField>
-
             <textField>
-                <reportElement x="285" y="70" width="270" height="18"/>
+                <reportElement x="285" y="70" width="270" height="18" uuid="692faf1c-533e-4f19-bfff-525e06a5271e"/>
                 <textElement textAlignment="Right">
-                    <font fontName="Times New Roman" size="11"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Ngày tạo: " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{createdAt})]]></textFieldExpression>
             </textField>
         </band>
     </title>
-
-    <!-- Column Header -->
     <columnHeader>
         <band height="25">
             <staticText>
-                <reportElement x="0" y="0" width="90" height="25" backcolor="#EAD9C5" mode="Opaque"/>
-                <box><pen lineWidth="0.8"/></box>
+                <reportElement mode="Opaque" x="0" y="0" width="90" height="25" backcolor="#EAD9C5" uuid="bdb9d288-451f-44d3-8ce9-362a30e3505e"/>
+                <box>
+                    <pen lineWidth="0.8"/>
+                </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="11" isBold="true"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <text><![CDATA[Mã SP]]></text>
             </staticText>
-
             <staticText>
-                <reportElement x="90" y="0" width="240" height="25" backcolor="#EAD9C5" mode="Opaque"/>
-                <box><pen lineWidth="0.8"/></box>
+                <reportElement mode="Opaque" x="90" y="0" width="220" height="25" backcolor="#EAD9C5" uuid="884afd13-3d96-460f-b4a3-b44b4d737f24"/>
+                <box>
+                    <pen lineWidth="0.8"/>
+                </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="11" isBold="true"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <text><![CDATA[Tên sản phẩm]]></text>
             </staticText>
-
             <staticText>
-                <reportElement x="330" y="0" width="30" height="25" backcolor="#EAD9C5" mode="Opaque"/>
-                <box><pen lineWidth="0.8"/></box>
+                <reportElement mode="Opaque" x="370" y="0" width="90" height="25" backcolor="#EAD9C5" uuid="99877fcd-5656-4a60-8dcc-9b61d0b629d3"/>
+                <box>
+                    <pen lineWidth="0.8"/>
+                </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="11" isBold="true"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
-                </textElement>
-                <text><![CDATA[SL]]></text>
-            </staticText>
-
-            <staticText>
-                <reportElement x="360" y="0" width="80" height="25" backcolor="#EAD9C5" mode="Opaque"/>
-                <box><pen lineWidth="0.8"/></box>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="11" isBold="true"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <text><![CDATA[Giá nhập]]></text>
             </staticText>
-
             <staticText>
-                <reportElement x="440" y="0" width="115" height="25" backcolor="#EAD9C5" mode="Opaque"/>
-                <box><pen lineWidth="0.8"/></box>
+                <reportElement mode="Opaque" x="460" y="0" width="95" height="25" backcolor="#EAD9C5" uuid="8d6239d1-a684-450a-bca5-68f073c7a4de"/>
+                <box>
+                    <pen lineWidth="0.8"/>
+                </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="11" isBold="true"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <text><![CDATA[Thành tiền]]></text>
             </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="310" y="0" width="60" height="25" backcolor="#EAD9C5" uuid="2354edd1-6d97-452b-a88b-1cbb7c9421ce"/>
+                <box>
+                    <pen lineWidth="0.8"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Times New Roman" size="11" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[SLG]]></text>
+            </staticText>
         </band>
     </columnHeader>
-
-    <!-- Detail -->
     <detail>
         <band height="20">
             <textField>
-                <reportElement x="0" y="0" width="90" height="20"/>
-                <box><pen lineWidth="0.5"/></box>
+                <reportElement x="0" y="0" width="90" height="20" uuid="6b859c80-e4c9-4532-997c-ed01f65e846a"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="10"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="10" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$F{productSku}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[" "+$F{productSku}]]></textFieldExpression>
             </textField>
-
             <textField>
-                <reportElement x="90" y="0" width="240" height="20"/>
-                <box><pen lineWidth="0.5"/></box>
+                <reportElement x="90" y="0" width="220" height="20" uuid="398f5eed-3d0d-48f4-bdb1-849a31451889"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="10"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="10" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$F{productName}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[" "+$F{productName}]]></textFieldExpression>
             </textField>
-
             <textField>
-                <reportElement x="330" y="0" width="30" height="20"/>
-                <box><pen lineWidth="0.5"/></box>
+                <reportElement x="310" y="0" width="60" height="20" uuid="9ebaaf2c-8bc3-4ea9-8f3a-9d1da710e737"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="10"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="10" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
             </textField>
-
             <textField pattern="#,##0">
-                <reportElement x="360" y="0" width="80" height="20"/>
-                <box><pen lineWidth="0.5"/></box>
+                <reportElement x="370" y="0" width="90" height="20" uuid="925d45e3-9a1a-4703-ac64-f17bbb3c759e"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="10"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="10" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{importPrice}]]></textFieldExpression>
             </textField>
-
             <textField pattern="#,##0">
-                <reportElement x="440" y="0" width="115" height="20"/>
-                <box><pen lineWidth="0.5"/></box>
+                <reportElement x="460" y="0" width="95" height="20" uuid="d389de72-9334-426d-835e-4b4ddf508e98"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font fontName="Times New Roman" size="10"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="10" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$F{importPrice}.multiply(new java.math.BigDecimal($F{quantity}))]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{importPrice} != null && $F{quantity} != null
+                        ? $F{importPrice}.multiply(new java.math.BigDecimal($F{quantity}))
+                        : java.math.BigDecimal.ZERO]]></textFieldExpression>
             </textField>
         </band>
     </detail>
-
-    <!-- Summary -->
     <summary>
-        <band height="532">
-            <textField>
-                <reportElement x="330" y="10" width="150" height="20"/>
+        <band height="500">
+            <staticText>
+                <reportElement x="390" y="10" width="70" height="20" uuid="e7c3e7aa-53dd-4279-9fc1-66f17f0380ad"/>
                 <textElement textAlignment="Right">
-                    <font fontName="Times New Roman" size="11" isBold="true"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA["Tổng cộng: "]]></textFieldExpression>
-            </textField>
-
+                <text><![CDATA[Tổng cộng:]]></text>
+            </staticText>
             <textField pattern="#,##0">
-                <reportElement x="480" y="10" width="75" height="20"/>
+                <reportElement x="480" y="10" width="75" height="20" uuid="d22902fb-741d-4090-9a39-84c6f2b44b42"/>
                 <textElement textAlignment="Right">
-                    <font fontName="Times New Roman" size="11" isBold="true"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" isBold="true" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$V{TOTAL_AMOUNT}]]></textFieldExpression>
             </textField>
-
             <staticText>
-                <reportElement x="60" y="450" width="150" height="50"/>
+                <reportElement x="60" y="450" width="150" height="50" uuid="add20be3-0d0d-4bcd-adb6-f8fd8533e493"/>
                 <textElement textAlignment="Center" verticalAlignment="Bottom">
-                    <font fontName="Times New Roman" size="11"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <text><![CDATA[Bên xuất
 (Ký, họ tên)]]></text>
             </staticText>
-
             <staticText>
-                <reportElement x="340" y="450" width="150" height="50"/>
+                <reportElement x="340" y="450" width="150" height="50" uuid="b3921fff-0cdd-4069-9074-91a66797e5d9"/>
                 <textElement textAlignment="Center" verticalAlignment="Bottom">
-                    <font fontName="Times New Roman" size="11"
-                          pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                    <font fontName="Times New Roman" size="11" pdfFontName="fonts/times.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
                 </textElement>
                 <text><![CDATA[Bên nhập
 (Ký, họ tên)]]></text>
             </staticText>
         </band>
     </summary>
-
 </jasperReport>
